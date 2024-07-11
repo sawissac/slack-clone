@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 97 31 105;
+    --secondary: 244 237 228;
+  }
+
+  html,
+  body,
+  #__next,
+  .main {
+    @apply h-full m-0 p-0 overflow-hidden;
+  }
+}
+
+@layer components {
+  .bg-dots {
+    --dot-bg: rgb(var(--secondary) / 1);
+    --dot-color: rgb(var(--primary) / 1);
+    --dot-size: 1px;
+    --dot-space: 22px;
+    background: linear-gradient(
+          90deg,
+          var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+          transparent 1%
+        )
+        center / var(--dot-space) var(--dot-space),
+      linear-gradient(
+          var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+          transparent 1%
+        )
+        center / var(--dot-space) var(--dot-space),
+      var(--dot-color);
+  }
+
+  .channel-list li a:before {
+    content: "# ";
+    @apply opacity-50;
+  }
+
+  .channel-list li a:hover {
+    @apply opacity-90;
+  }
+
+  .Messages {
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
