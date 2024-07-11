@@ -17,7 +17,8 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
     setUserLoaded(session ? true : false);
 
     if (user) {
-      Router.push("/channels/[id]", "/channels/1");
+      signIn()
+      Router.replace("/channels/[id]", "/channels/1");
     }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -27,7 +28,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
         setUserLoaded(!!currentUser);
         if (currentUser) {
           signIn();
-          Router.push("/channels/[id]", "/channels/1");
+          Router.replace("/channels/[id]", "/channels/1");
         }
       }
     );
@@ -47,7 +48,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    Router.push("/");
+    Router.replace("/", "/");
   };
 
   return (

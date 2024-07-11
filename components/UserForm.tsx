@@ -30,7 +30,7 @@ export const FormField: React.FC<FormFieldProps> = ({
     <>
       <input
         type={type}
-        className="block appearance-none w-full bg-white border border-grey-light hover:border-grey px-2 py-2 rounded shadow"
+        className="login-container__form-input"
         {...register(name, { valueAsNumber })}
         placeholder={placeholder}
       />

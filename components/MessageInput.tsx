@@ -14,23 +14,24 @@ const MessageInput: React.FC<{ onSubmit: (payload: string) => void }> = ({
   };
 
   const submitOnClick = () => {
-    onSubmit(messageText);
-    setMessageText("");
+    if (messageText.length) {
+      onSubmit(messageText);
+      setMessageText("");
+    }
   };
 
   return (
-    <div className="shadow appearance-none border rounded-md w-full overflow-hidden">
+    <div className="layout__message-input">
       <input
         type="text"
-        className="leading-tight py-4 px-3 focus:outline-none focus:shadow-outline text-gray-700 w-full"
         placeholder="Send a message"
         value={messageText}
         onChange={(e) => setMessageText(e.target.value)}
         onKeyDown={(e) => submitOnEnter(e)}
       />
-      <div className="flex justify-end items-center py-3 px-3 pr-5">
-        <button className="grid place-items-center" onClick={submitOnClick}>
-          <IconSend2 className="text-gray-400 hover:text-gray-500" />
+      <div>
+        <button onClick={submitOnClick}>
+          <IconSend2 />
         </button>
       </div>
     </div>

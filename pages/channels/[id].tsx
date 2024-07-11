@@ -15,7 +15,9 @@ export default function ChannelsPage() {
   const { user } = useContext(UserContext);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, channels, users } = useStore({ channelId: chId });
+  const isUserIncludedInChat = messages.filter((ls) => ls.user_id === user?.id);
 
+  console.log(isUserIncludedInChat);
   useEffect(() => {
     if (!messagesEndRef.current) return;
     messagesEndRef.current.scrollIntoView({
@@ -26,7 +28,7 @@ export default function ChannelsPage() {
 
   useEffect(() => {
     if (!channels.some((channel) => channel.id === chId)) {
-      router.push("/channels/1");
+      router.replace("/channels/1");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channels, channelId]);
@@ -34,9 +36,14 @@ export default function ChannelsPage() {
   return (
     <Auth>
       <Layout channels={channels} activeChannelId={chId} users={users}>
-        <div className="relative h-screen">
-          <div className="Messages h-full pb-[150px] px-4">
-            <div className="p-2 overflow-y-auto">
+        {!isUserIncludedInChat.length && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white bg-opacity-55 backdrop-blur-lg">
+            <p className="text-primary">Please first chat to see message!</p>
+          </div>
+        )}
+        <div className="layout__inner-message">
+          <div className="layout__inner-message__scroll">
+            <div>
               {messages.map((x) => {
                 const self = user?.id === x.user_id;
                 return (
@@ -48,10 +55,11 @@ export default function ChannelsPage() {
                   </div>
                 );
               })}
-              <div ref={messagesEndRef} style={{ height: 0 }} />
             </div>
+
+            <div ref={messagesEndRef} style={{ height: 0 }} />
           </div>
-          <div className="px-5 pb-8 pt-4 absolute bottom-0 left-0 w-full">
+          <div className="layout__inner-message__message">
             <MessageInput
               onSubmit={async (text) => addMessage(text, chId, user?.id)}
             />

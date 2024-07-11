@@ -11,7 +11,17 @@ import {
 import { User } from "@supabase/supabase-js";
 import { IconHash, IconLogout2, IconPlus } from "@tabler/icons-react";
 import Image from "next/image";
-import { USER_NETWORK_STATUS } from "@/lib/constants";
+import { Roles } from "@/lib/constants";
+
+const ActiveUserIndicator: React.FC<{ total: string }> = (props) => {
+  return (
+    <div className="layout__user-indicator">
+      <div className="bg-primary">S</div>
+      <div className="translate-x-[-15px] bg-red-500">V</div>
+      <div className="translate-x-[-30px] bg-green-500">{props.total}</div>
+    </div>
+  );
+};
 
 const SidebarItem: React.FC<{
   channel: SupabaseChannelsResponse;
@@ -20,18 +30,19 @@ const SidebarItem: React.FC<{
   userRoles: string[] | undefined;
 }> = ({ channel, isActiveChannel, user, userRoles }) => (
   <>
-    <li className="flex items-center justify-between py-1">
+    <li className="layout__channel-list__link">
       <Link
         href="/channels/[id]"
         as={`/channels/${channel.id}`}
-        className=" w-full"
+        className="w-full"
       >
         <span className={isActiveChannel ? "font-bold" : ""}>
           {channel.slug}
         </span>
       </Link>
       {channel.id !== 1 &&
-        (channel.created_by === user?.id || userRoles?.includes("admin")) && (
+        (channel.created_by === user?.id ||
+          userRoles?.includes(Roles.ADMIN.toLowerCase())) && (
           <button onClick={() => deleteChannel(channel.id)}>
             <TrashIcon />
           </button>
@@ -42,13 +53,8 @@ const SidebarItem: React.FC<{
 
 function getActiveUser(payload: Map<string, SupabaseUserResponse | null>) {
   if (!payload) return payload;
-  let active = 0;
-  payload.forEach((values, keys) => {
-    if (values?.status === USER_NETWORK_STATUS.ONLINE) {
-      active++;
-    }
-  });
-  return active;
+  const size = payload.size;
+  return size >= 3 ? size + "+" : "3";
 }
 
 const Layout: React.FC<{
@@ -84,14 +90,14 @@ const Layout: React.FC<{
   };
 
   return (
-    <main className="main flex h-screen w-screen overflow-hidden">
+    <main className="layout__container">
       {/* Sidebar */}
       <nav
-        className="flex overflow-y-scroll "
+        className="layout__sidebar"
         style={{ maxWidth: "30%", minWidth: 350, maxHeight: "100vh" }}
       >
-        <div className="flex flex-col justify-start items-start p-3 h-full bg-primary gap-3">
-          <button className="w-[45px] h-[45px] bg-white grid place-items-center rounded-md">
+        <div className="layout__sidebar-1">
+          <button className="layout__sidebar-1__btn">
             <Image
               src={"/slack-clone-logo.jpg"}
               loading="lazy"
@@ -100,28 +106,25 @@ const Layout: React.FC<{
               alt="app logo"
             />
           </button>
-          <button className="w-[45px] h-[45px] bg-white grid place-items-center rounded-md backdrop-blur-sm bg-opacity-35">
+          <button className="layout__sidebar-1__btn-trans">
             <IconHash width={25} height={25} className="text-gray-200" />
           </button>
           <button
-            className="w-[45px] h-[45px] bg-white grid place-items-center rounded-md backdrop-blur-sm bg-opacity-35 mt-auto"
+            className="layout__sidebar-1__btn-trans mt-auto"
             onClick={handleLogout}
           >
             <IconLogout2 width={25} height={25} className="text-gray-200" />
           </button>
         </div>
-        <div className="p-3 w-full bg-gray-100">
-          <div className="flex justify-between h-[45px] items-center">
-            <div className="text-[20px] font-bold"># Channels</div>
-            <button
-              className="hover:bg-primary hover:bg-opacity-10 text-white p-2 rounded max-w-fit transition duration-150"
-              onClick={() => newChannel()}
-            >
+        <div className="layout__sidebar-2">
+          <div className="layout__sidebar-2__label">
+            <div># Channels</div>
+            <button onClick={() => newChannel()}>
               <IconPlus width={18} height={18} className="text-primary" />
             </button>
           </div>
           <hr className="my-2" />
-          <ul className="channel-list">
+          <ul className="layout__channel-list">
             {props.channels.map((x) => (
               <SidebarItem
                 channel={x}
@@ -136,9 +139,9 @@ const Layout: React.FC<{
       </nav>
 
       {/* Messages */}
-      <div className="flex-1 bg-white h-screen relative">
-        <div className="absolute left-0 right-0 top-0 h-[69px] shadow-md bg-white border-b border-solid border-gray-100 flex justify-between items-center px-4">
-          <span className="font-bold text-xl">ACTIVE - {getActiveUser(props.users)}</span>
+      <div className="layout__message">
+        <div className="layout__message-nav">
+          <ActiveUserIndicator total={getActiveUser(props.users)} />
           <span className="text-gray-500">{email}</span>
         </div>
         {props.children}

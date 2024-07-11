@@ -9,10 +9,10 @@ export const Auth: React.FC<{ children: ReactNode }> = (props) => {
 
   useEffect(() => {
     if (!session) {
-      console.log(session);
       router.push("/");
+    }else{
+      setLock(false);
     }
-    setLock(false);
   }, [router, session]);
 
   return <div className="bg-dots">{lock ? null : props.children}</div>;

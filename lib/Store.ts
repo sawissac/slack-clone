@@ -1,19 +1,18 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { Database } from "@/database.types";
+import { Database, Tables } from "@/database.types";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   process.env.NEXT_PUBLIC_SUPABASE_KEY ?? ""
 );
 
-export type SupabaseTable = Database["public"]["Tables"];
-export type SupabaseMessageResponse = SupabaseTable["messages"]["Row"] & {
+export type SupabaseMessageResponse = Tables<"messages"> & {
   author: SupabaseUserResponse;
 };
-export type SupabaseUserResponse = SupabaseTable["users"]["Row"];
-export type SupabaseChannelsResponse = SupabaseTable["channels"]["Row"];
-export type SupabaseUserRoleResponse = SupabaseTable["user_roles"]["Row"];
+export type SupabaseUserResponse = Tables<"users">;
+export type SupabaseChannelsResponse = Tables<"channels">;
+export type SupabaseUserRoleResponse = Tables<"user_roles">;
 
 interface UseStoreProps {
   channelId: number;
@@ -169,6 +168,7 @@ export const fetchUser = async (
     console.log("error", error);
   }
 };
+
 
 export const fetchUserRoles = async (
   setState: (x: SupabaseUserRoleResponse[] | null) => void

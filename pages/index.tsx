@@ -11,10 +11,12 @@ import {
 } from "@/components/UserForm";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import { IconLoader2 } from "@tabler/icons-react";
 
 const Home = () => {
   const [signType, setSignType] = useState<string>(AUTH_STATUS.SIGNIN);
   const isSignIn = signType === AUTH_STATUS.SIGNIN;
+  const [loading, setLoading] = useState(false);
   const {
     handleSubmit,
     formState: { errors },
@@ -26,12 +28,13 @@ const Home = () => {
 
   const handleSign = () => {
     setSignType((s) =>
-      s === AUTH_STATUS.SIGNIN ? AUTH_STATUS.SIGNUP : AUTH_STATUS.SIGNIN
+      s === AUTH_STATUS.SIGNIN ? AUTH_STATUS.SIGNUP : AUTH_STATUS.SIGNIN,
     );
   };
 
   const handleLogin = async (data: FormData) => {
     const { email, password } = data;
+    setLoading(true);
     try {
       const { error } =
         signType === AUTH_STATUS.SIGNIN
@@ -44,12 +47,18 @@ const Home = () => {
       };
 
       const invalidGrand = () => {
-        setError("email", formError);
-        setError("password", formError);
+        setTimeout(() => {
+          setLoading(false);
+          setError("email", formError);
+          setError("password", formError);
+        }, 300);
       };
 
       const alreadyExits = () => {
-        setError("email", formError);
+        setTimeout(() => {
+          setLoading(false);
+          setError("email", formError);
+        }, 300);
       };
 
       switch (error?.status) {
@@ -68,13 +77,13 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center items-center p-4 bg-dots">
-      <div className="w-full sm:w-1/2 xl:w-1/3">
+    <div className="login-container">
+      <div className="login-container__form-container">
         <form
           onSubmit={handleSubmit(handleLogin)}
-          className="border-teal p-8 border-t-12 bg-white mb-6 rounded-lg shadow-lg"
+          className="login-container__form"
         >
-          <div className="flex justify-center py-8">
+          <div className="login-container__logo">
             <Image
               src={"/slack-clone-logo.png"}
               loading="lazy"
@@ -83,72 +92,71 @@ const Home = () => {
               alt="app_logo"
             />
           </div>
-          <div className="mb-4">
-            <label className="font-bold text-grey-darker block mb-2">
-              Email
-            </label>
-            <FormField
-              type="email"
-              placeholder="Email"
-              name="email"
-              register={register}
-              error={errors.email}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="font-bold text-grey-darker block mb-2">
-              Password
-            </label>
-            <FormField
-              type="password"
-              placeholder="Password"
-              name="password"
-              register={register}
-              error={errors.password}
-            />
-          </div>
-          {!isSignIn && (
-            <div className="mb-4">
-              <label className="font-bold text-grey-darker block mb-2">
-                Confirm Password
-              </label>
-              <FormField
-                type="password"
-                placeholder="Confirm Password"
-                name="confirmPassword"
-                register={register}
-                error={errors.confirmPassword}
-              />
+          {loading ? (
+            <div className="login-container__loading">
+              <IconLoader2 />
+              <p>Authenticating...</p>
             </div>
-          )}
-          <div className="flex flex-col gap-5 py-8">
-            <button
-              type="submit"
-              className="bg-primary hover:bg-teal text-white py-2 px-4 rounded text-center transition duration-150 hover:bg-opacity-95 hover:text-white"
-            >
-              {!isSignIn ? "Sign up" : "Sign in"}
-            </button>
-            <button
-              type="button"
-              className="text-gray-600 text-sm"
-              onClick={handleSign}
-            >
-              {!isSignIn ? (
-                <>
-                  Already have one?{" "}
-                  <span className="text-primary font-medium">Sign in</span>.
-                </>
-              ) : (
-                <>
-                  New user?{" "}
-                  <span className="text-primary font-medium">
-                    Create account
-                  </span>
-                  .
-                </>
+          ) : (
+            <>
+              <div className="mb-4">
+                <label className="login-container__form-label">Email</label>
+                <FormField
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  register={register}
+                  error={errors.email}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="login-container__form-label">Password</label>
+                <FormField
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  register={register}
+                  error={errors.password}
+                />
+              </div>
+              {!isSignIn && (
+                <div className="mb-4">
+                  <label className="login-container__form-label">
+                    Confirm Password
+                  </label>
+                  <FormField
+                    type="password"
+                    placeholder="Confirm Password"
+                    name="confirmPassword"
+                    register={register}
+                    error={errors.confirmPassword}
+                  />
+                </div>
               )}
-            </button>
-          </div>
+              <div className="flex flex-col gap-5 py-8">
+                <button type="submit" className="login-container__form-btn">
+                  {!isSignIn ? "Sign up" : "Sign in"}
+                </button>
+                <button
+                  type="button"
+                  className="login-container__btn-link"
+                  onClick={handleSign}
+                >
+                  {!isSignIn ? (
+                    <>
+                      Already have one?
+                      <span>Sign in</span>.
+                    </>
+                  ) : (
+                    <>
+                      New user?
+                      <span>Create account</span>.
+                    </>
+                  )}
+                </button>
+              </div>
+            </>
+          )}
         </form>
       </div>
     </div>
