@@ -146,7 +146,7 @@
   }
 
   .layout__message {
-    @apply relative h-screen flex-1 bg-white;
+    @apply relative h-dvh flex-1 bg-white;
   }
 
   .layout__message-nav {
@@ -209,7 +209,7 @@
   }
 
   .layout__inner-message {
-    @apply relative h-screen;
+    @apply relative h-dvh;
   }
 
   .layout__inner-message__scroll {
