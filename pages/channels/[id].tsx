@@ -17,7 +17,6 @@ export default function ChannelsPage() {
   const { messages, channels, users } = useStore({ channelId: chId });
   const isUserIncludedInChat = messages.filter((ls) => ls.user_id === user?.id);
 
-  console.log(isUserIncludedInChat);
   useEffect(() => {
     if (!messagesEndRef.current) return;
     messagesEndRef.current.scrollIntoView({
@@ -36,7 +35,7 @@ export default function ChannelsPage() {
   return (
     <Auth>
       <Layout channels={channels} activeChannelId={chId} users={users}>
-        {!isUserIncludedInChat.length && (
+        {!isUserIncludedInChat.length && chId !== 1 && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white bg-opacity-55 backdrop-blur-lg">
             <p className="text-primary">Please first chat to see message!</p>
           </div>
@@ -55,9 +54,8 @@ export default function ChannelsPage() {
                   </div>
                 );
               })}
+              <div ref={messagesEndRef} style={{ height: 0 }} />
             </div>
-
-            <div ref={messagesEndRef} style={{ height: 0 }} />
           </div>
           <div className="layout__inner-message__message">
             <MessageInput
