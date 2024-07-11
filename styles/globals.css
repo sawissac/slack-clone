@@ -89,7 +89,11 @@
   }
 
   .layout__sidebar {
-    @apply flex overflow-y-scroll;
+    @apply flex overflow-y-scroll overflow-x-hidden xl:w-[330px] w-[80%] transition-all bg-gray-100 flex-grow-0 flex-shrink-0;
+  }
+
+  .layout__sidebar--close {
+    @apply overflow-hidden w-[70px];
   }
 
   .layout__sidebar-1 {
@@ -105,7 +109,7 @@
   }
 
   .layout__sidebar-2 {
-    @apply w-full bg-gray-100 p-3;
+    @apply w-full p-3;
   }
 
   .layout__sidebar-2__label {
@@ -113,7 +117,7 @@
   }
 
   .layout__sidebar-2__label > div {
-    @apply text-[20px] font-bold;
+    @apply text-[20px] font-bold max-w-fit flex-grow-0 flex-shrink-0;
   }
 
   .layout__sidebar-2__label > button {
@@ -150,7 +154,7 @@
   }
 
   .layout__message-chat {
-    @apply transition-all relative my-5 flex bg-white  w-[45%] flex-shrink-0 flex-grow-0 gap-2 space-x-2  items-end  px-5 py-2 ;
+    @apply transition-all relative my-5 flex bg-white w-full  xl:w-[45%] flex-shrink-0 flex-grow-0 gap-2 space-x-2  items-end  px-5 py-2 ;
     @apply rounded-md border border-solid border-white hover:border-primary hover:border-opacity-20 hover:shadow-md;
   }
 
@@ -159,11 +163,11 @@
   }
 
   .layout__channel-chat-icon {
-    @apply hidden group-hover:flex min-h-10 min-w-10 items-center justify-center rounded-md border border-solid border-primary border-opacity-20 bg-white text-primary shadow-md;
+    @apply flex-shrink-0 flex-grow-0 hidden group-hover:flex min-h-10 min-w-10 items-center justify-center rounded-md border border-solid border-primary border-opacity-20 bg-white text-primary shadow-md;
   }
 
   .layout__channel-chat-message {
-    @apply w-full overflow-hidden;
+    @apply w-full overflow-hidden xl:text-base text-sm;
   }
 
   .layout__channel-chat-title--right {

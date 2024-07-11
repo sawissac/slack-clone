@@ -7,6 +7,7 @@ import { useContext, useEffect, useRef } from "react";
 import UserContext from "@/lib/UserContext";
 import { Auth } from "@/components/Auth";
 import { twMerge } from "tailwind-merge";
+import { isMobileView } from "@/lib";
 
 export default function ChannelsPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function ChannelsPage() {
   const isUserIncludedInChat = messages.filter((ls) => ls.user_id === user?.id);
 
   useEffect(() => {
-    if (!messagesEndRef.current) return;
+    if (!messagesEndRef.current || isMobileView()) return;
     messagesEndRef.current.scrollIntoView({
       block: "start",
       behavior: "smooth",

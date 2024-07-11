@@ -19,7 +19,7 @@ const Message: React.FC<{
   self: boolean;
 }> = ({ message, self }) => {
   const { user, userRoles } = useContext(UserContext);
-  const superUser = [Roles.ADMIN, Roles.MODERATOR] as string[];
+  const superUser = [Roles.ADMIN] as string[];
 
   return (
     <div
@@ -29,7 +29,7 @@ const Message: React.FC<{
       ])}
     >
       {(user?.id === message.user_id ||
-        userRoles?.some((role) => superUser.includes(role))) && (
+        userRoles?.some((ls) => superUser.includes(ls))) && (
         <button
           onClick={() => deleteMessage(message?.id)}
           className="layout__channel-chat-icon"

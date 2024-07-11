@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, useState } from "react";
 import UserContext from "@/lib/UserContext";
 import TrashIcon from "@/components/TrashIcon";
 import {
@@ -9,9 +9,15 @@ import {
   SupabaseUserResponse,
 } from "@/lib/Store";
 import { User } from "@supabase/supabase-js";
-import { IconHash, IconLogout2, IconPlus } from "@tabler/icons-react";
+import {
+  IconHash,
+  IconLogout2,
+  IconMenu3,
+  IconPlus,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import { Roles } from "@/lib/constants";
+import { twMerge } from "tailwind-merge";
 
 const ActiveUserIndicator: React.FC<{ total: string }> = (props) => {
   return (
@@ -64,6 +70,7 @@ const Layout: React.FC<{
   users: Map<string, SupabaseUserResponse | null>;
 }> = (props) => {
   const { signOut, user, userRoles } = useContext(UserContext);
+  const [toggle, setToggle] = useState(false);
   const email = user?.email;
 
   const slugify = (text: string) => {
@@ -89,12 +96,18 @@ const Layout: React.FC<{
     if (flag && signOut) signOut();
   };
 
+  const handleToggle = () => {
+    setToggle((s) => !s);
+  };
+
   return (
     <main className="layout__container">
       {/* Sidebar */}
       <nav
-        className="layout__sidebar"
-        style={{ maxWidth: "30%", minWidth: 350, maxHeight: "100vh" }}
+        className={twMerge([
+          "layout__sidebar",
+          toggle && "layout__sidebar--close",
+        ])}
       >
         <div className="layout__sidebar-1">
           <button className="layout__sidebar-1__btn">
@@ -116,33 +129,40 @@ const Layout: React.FC<{
             <IconLogout2 width={25} height={25} className="text-gray-200" />
           </button>
         </div>
-        <div className="layout__sidebar-2">
-          <div className="layout__sidebar-2__label">
-            <div># Channels</div>
-            <button onClick={() => newChannel()}>
-              <IconPlus width={18} height={18} className="text-primary" />
-            </button>
+        {!toggle && (
+          <div className={"layout__sidebar-2"}>
+            <div className="layout__sidebar-2__label">
+              <div># Channels</div>
+              <button onClick={() => newChannel()}>
+                <IconPlus width={18} height={18} className="text-primary" />
+              </button>
+            </div>
+            <hr className="my-2" />
+            <ul className="layout__channel-list">
+              {props.channels.map((x) => (
+                <SidebarItem
+                  channel={x}
+                  key={x.id}
+                  isActiveChannel={x.id === props.activeChannelId}
+                  user={user}
+                  userRoles={userRoles}
+                />
+              ))}
+            </ul>
           </div>
-          <hr className="my-2" />
-          <ul className="layout__channel-list">
-            {props.channels.map((x) => (
-              <SidebarItem
-                channel={x}
-                key={x.id}
-                isActiveChannel={x.id === props.activeChannelId}
-                user={user}
-                userRoles={userRoles}
-              />
-            ))}
-          </ul>
-        </div>
+        )}
       </nav>
 
       {/* Messages */}
       <div className="layout__message">
         <div className="layout__message-nav">
-          <ActiveUserIndicator total={getActiveUser(props.users)} />
-          <span className="text-gray-500">{email}</span>
+          <div className="flex items-center justify-center gap-3">
+            <button className={"px-3"} onClick={handleToggle}>
+              <IconMenu3 />
+            </button>
+            <ActiveUserIndicator total={getActiveUser(props.users)} />
+          </div>
+          <span className="truncate text-gray-500">{email}</span>
         </div>
         {props.children}
       </div>
