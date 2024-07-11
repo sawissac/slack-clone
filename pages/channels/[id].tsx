@@ -7,13 +7,14 @@ import { useContext, useEffect, useRef } from "react";
 import UserContext from "@/lib/UserContext";
 import { Auth } from "@/components/Auth";
 import { twMerge } from "tailwind-merge";
-import { isMobileView } from "@/lib";
+import { getUnDuplicateAuthor, isMobileView, parseEmail } from "@/lib";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 export default function ChannelsPage() {
   const router = useRouter();
   const { id: channelId } = router.query;
   const chId = channelId ? parseInt(channelId as string) : 0;
-  const { user } = useContext(UserContext);
+  const { user, showUser, toggleShowUser } = useContext(UserContext);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, channels, users } = useStore({ channelId: chId });
   const isUserIncludedInChat = messages.filter((ls) => ls.user_id === user?.id);
@@ -32,37 +33,62 @@ export default function ChannelsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channels, channelId]);
-
+  console.log(messages);
   return (
     <Auth>
       <Layout channels={channels} activeChannelId={chId} users={users}>
         {!isUserIncludedInChat.length && chId !== 1 && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white bg-opacity-55 backdrop-blur-lg">
-            <p className="text-primary">Please first chat to see message!</p>
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white bg-opacity-55 text-sm backdrop-blur-lg xl:text-base">
+            <p className="text-primary">
+              Please first chat to join the private channel!
+            </p>
           </div>
         )}
         <div className="layout__inner-message">
-          <div className="layout__inner-message__scroll">
-            <div>
-              {messages.map((x) => {
-                const self = user?.id === x.user_id;
+          {showUser ? (
+            <div className="overflow-y-auto px-5 pt-[95px]">
+              <button
+                onClick={toggleShowUser}
+                className="flex items-center justify-center gap-2 mb-6"
+              >
+                <IconArrowLeft /> Back
+              </button>
+              {getUnDuplicateAuthor(messages).map((ls, idx) => {
                 return (
-                  <div
-                    key={x.id}
-                    className={twMerge(["w-full", self && "flex justify-end"])}
-                  >
-                    <Message message={x} self={self} />
+                  <div key={idx} className="my-2 font-bold text-primary pl-7">
+                    {parseEmail(ls)}
                   </div>
                 );
               })}
-              <div ref={messagesEndRef} style={{ height: 0 }} />
             </div>
-          </div>
-          <div className="layout__inner-message__message">
-            <MessageInput
-              onSubmit={async (text) => addMessage(text, chId, user?.id)}
-            />
-          </div>
+          ) : (
+            <>
+              <div className="layout__inner-message__scroll">
+                <div>
+                  {messages.map((x) => {
+                    const self = user?.id === x.user_id;
+                    return (
+                      <div
+                        key={x.id}
+                        className={twMerge([
+                          "w-full",
+                          self && "flex justify-end",
+                        ])}
+                      >
+                        <Message message={x} self={self} />
+                      </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} style={{ height: 0 }} />
+                </div>
+              </div>
+              <div className="layout__inner-message__message">
+                <MessageInput
+                  onSubmit={async (text) => addMessage(text, chId, user?.id)}
+                />
+              </div>
+            </>
+          )}
         </div>
       </Layout>
     </Auth>

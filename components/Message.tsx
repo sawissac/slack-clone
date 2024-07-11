@@ -5,14 +5,7 @@ import TrashIcon from "@/components/TrashIcon";
 import { twMerge } from "tailwind-merge";
 import moment from "moment";
 import { Roles } from "@/lib/constants";
-
-function parseEmail(email: string | null) {
-  if (!email) return "";
-  let parsedAtSign = email.split("@")?.at(0);
-  let parsePlusSign = parsedAtSign?.split("+");
-  let parsedPlusSign = parsePlusSign?.at(0);
-  return parsedPlusSign;
-}
+import { parseEmail } from "@/lib";
 
 const Message: React.FC<{
   message: SupabaseMessageResponse;
@@ -32,7 +25,11 @@ const Message: React.FC<{
         userRoles?.some((ls) => superUser.includes(ls))) && (
         <button
           onClick={() => deleteMessage(message?.id)}
-          className="layout__channel-chat-icon"
+          className={
+            self
+              ? "layout__channel-chat-icon--left"
+              : "layout__channel-chat-icon--right"
+          }
         >
           <TrashIcon />
         </button>

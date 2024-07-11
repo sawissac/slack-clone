@@ -19,9 +19,14 @@ import Image from "next/image";
 import { Roles } from "@/lib/constants";
 import { twMerge } from "tailwind-merge";
 
-const ActiveUserIndicator: React.FC<{ total: string }> = (props) => {
+const ActiveUserIndicator: React.FC<{ total: string; onClick: () => void }> = (
+  props,
+) => {
   return (
-    <div className="layout__user-indicator">
+    <div
+      className="layout__user-indicator cursor-pointer"
+      onClick={props.onClick}
+    >
       <div className="bg-primary">S</div>
       <div className="translate-x-[-15px] bg-red-500">V</div>
       <div className="translate-x-[-30px] bg-green-500">{props.total}</div>
@@ -34,13 +39,15 @@ const SidebarItem: React.FC<{
   isActiveChannel: boolean;
   user: User | null | undefined;
   userRoles: string[] | undefined;
-}> = ({ channel, isActiveChannel, user, userRoles }) => (
+  onClick: () => void;
+}> = ({ channel, isActiveChannel, user, userRoles, onClick }) => (
   <>
     <li className="layout__channel-list__link">
       <Link
         href="/channels/[id]"
         as={`/channels/${channel.id}`}
         className="w-full"
+        onClick={onClick}
       >
         <span className={isActiveChannel ? "font-bold" : ""}>
           {channel.slug}
@@ -60,7 +67,7 @@ const SidebarItem: React.FC<{
 function getActiveUser(payload: Map<string, SupabaseUserResponse | null>) {
   if (!payload) return payload;
   const size = payload.size;
-  return size >= 3 ? size + "+" : "3";
+  return size >= 3 ? 3 + "+" : 3 + "";
 }
 
 const Layout: React.FC<{
@@ -69,7 +76,7 @@ const Layout: React.FC<{
   activeChannelId: number;
   users: Map<string, SupabaseUserResponse | null>;
 }> = (props) => {
-  const { signOut, user, userRoles } = useContext(UserContext);
+  const { signOut, user, userRoles, toggleShowUser } = useContext(UserContext);
   const [toggle, setToggle] = useState(false);
   const email = user?.email;
 
@@ -146,6 +153,7 @@ const Layout: React.FC<{
                   isActiveChannel={x.id === props.activeChannelId}
                   user={user}
                   userRoles={userRoles}
+                  onClick={handleToggle}
                 />
               ))}
             </ul>
@@ -160,7 +168,12 @@ const Layout: React.FC<{
             <button className={"px-3"} onClick={handleToggle}>
               <IconMenu3 />
             </button>
-            <ActiveUserIndicator total={getActiveUser(props.users)} />
+            <ActiveUserIndicator
+              total={getActiveUser(props.users)}
+              onClick={() => {
+                if(toggleShowUser) toggleShowUser();
+              }}
+            />
           </div>
           <span className="truncate text-gray-500">{email}</span>
         </div>

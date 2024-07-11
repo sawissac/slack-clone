@@ -10,6 +10,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
   const [userLoaded, setUserLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [userRoles, setUserRoles] = useState<Array<string>>([]);
+  const [showUser, setShowUser] = useState(false);
 
   useEffect(() => {
     const session = supabase.auth.session();
@@ -17,7 +18,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
     setUserLoaded(session ? true : false);
 
     if (user) {
-      signIn()
+      signIn();
       Router.replace("/channels/[id]", "/channels/1");
     }
 
@@ -30,7 +31,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
           signIn();
           Router.replace("/channels/[id]", "/channels/1");
         }
-      }
+      },
     );
 
     return () => {
@@ -51,12 +52,18 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
     Router.replace("/", "/");
   };
 
+  const toggleShowUser = () => {
+    setShowUser((s) => !s);
+  };
+
   return (
     <UserContext.Provider
       value={{
         userLoaded,
         user,
         userRoles,
+        showUser,
+        toggleShowUser,
         signIn,
         signOut,
       }}

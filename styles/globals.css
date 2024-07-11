@@ -93,7 +93,7 @@
   }
 
   .layout__sidebar--close {
-    @apply overflow-hidden w-[70px];
+    @apply overflow-hidden xl:w-[70px] w-0;
   }
 
   .layout__sidebar-1 {
@@ -158,14 +158,14 @@
     @apply rounded-md border border-solid border-white hover:border-primary hover:border-opacity-20 hover:shadow-md;
   }
 
-  .layout__message-chat--self {
-    @apply flex-row-reverse;
+  .layout__channel-chat-icon--left {
+    @apply absolute bottom-2 left-2 flex-shrink-0 flex-grow-0 hidden group-hover:flex min-h-10 min-w-10 items-center justify-center rounded-md border border-solid border-primary border-opacity-20 bg-white text-primary shadow-md;
   }
 
-  .layout__channel-chat-icon {
-    @apply flex-shrink-0 flex-grow-0 hidden group-hover:flex min-h-10 min-w-10 items-center justify-center rounded-md border border-solid border-primary border-opacity-20 bg-white text-primary shadow-md;
+  .layout__channel-chat-icon--right {
+    @apply absolute bottom-2 right-2 flex-shrink-0 flex-grow-0 hidden group-hover:flex min-h-10 min-w-10 items-center justify-center rounded-md border border-solid border-primary border-opacity-20 bg-white text-primary shadow-md;
   }
-
+  
   .layout__channel-chat-message {
     @apply w-full overflow-hidden xl:text-base text-sm;
   }

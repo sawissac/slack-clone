@@ -1,15 +1,17 @@
-import { createContext } from 'react'
-import { SupabaseUserResponse, SupabaseUserRoleResponse } from './Store'
-import { User } from '@supabase/supabase-js'
+import { createContext } from "react";
+import { SupabaseUserResponse, SupabaseUserRoleResponse } from "./Store";
+import { User } from "@supabase/supabase-js";
 
 export interface UserContextType {
-   userLoaded: boolean
-   user: User | null
-   userRoles: string[]
-   signIn: () => void
-   signOut: () => void 
+  userLoaded: boolean;
+  user: User | null;
+  userRoles: string[];
+  showUser: boolean;
+  toggleShowUser: () => void;
+  signIn: () => void;
+  signOut: () => void;
 }
 
-const UserContext = createContext<Partial<UserContextType>>({})
+const UserContext = createContext<Partial<UserContextType>>({});
 
-export default UserContext
+export default UserContext;
