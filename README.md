@@ -71,7 +71,7 @@ Given the time frame. I have scoped out the features:
 
 ![1720764098497](image/README/1720764098497.png)
 
-6. There you will see dashboard and go to **Project Api section.** Copy the **Project URL** and **API Key**.
+6. Go to home tabs and there you will see dashboard and go to **Project Api section.** Copy the **Project URL** and **API Key**.
 
 ![1720762876738](image/README/1720762876738.png)
 
