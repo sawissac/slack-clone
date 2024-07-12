@@ -1,3 +1,5 @@
+# Slack Clone App
+
 ![1720769735085](image/README/1720769735085.png)
 
 # Getting Started
@@ -52,25 +54,36 @@ Given the time frame. I have scoped out the features:
 ### Configure Supabase Database
 
 1. Sign in to supabase website & press **New project.**
-   ![1720762914151](image/README/1720762914151.png)
+
+![1720762914151](image/README/1720762914151.png)
+
 2. Go to project folder & copy the **script** from the file **full-schema.sql** in the project.
+
 3. Go to Sql Editor
-   ![1720763052039](image/README/1720763052039.png)
+
+![1720763052039](image/README/1720763052039.png)
+
 4. Press the **Quickstarts** & select **Slack Clone**
-   ![1720763780607](image/README/1720763780607.png)
+
+![1720763780607](image/README/1720763780607.png)
+
 5. Paste the **full-schema.sql** script to the editor and press run. You will see the Destructive operation popup but press the destructive query.
-   ![1720764098497](image/README/1720764098497.png)
+
+![1720764098497](image/README/1720764098497.png)
+
 6. There you will see dashboard and go to **Project Api section.** Copy the **Project URL** and **API Key**.
-   ![1720762876738](image/README/1720762876738.png)
+
+![1720762876738](image/README/1720762876738.png)
 
 ### Setup Auth Service
 
 1. Go to Authentication tab and select provider.
-   ![1720765195753](image/README/1720765195753.png)
-2. > And only enable email provider and save. I do this because the email provider has rate limit on sending emails.
-   >
 
-   ![1720765340465](image/README/1720765340465.png)
+![1720765195753](image/README/1720765195753.png)
+
+2. > And only enable email provider and save. I do this because the email provider has rate limit on sending emails.
+
+![1720765340465](image/README/1720765340465.png)
 
 ### Setup env
 
