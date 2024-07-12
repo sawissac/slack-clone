@@ -22,11 +22,15 @@ const Home = () => {
     formState: { errors },
     register,
     setError,
+    setValue
   } = useForm<FormData>({
     resolver: zodResolver(!isSignIn ? UserSignUpSchema : UserSignInSchema),
   });
 
   const handleSign = () => {
+    setValue("email", "")
+    setValue("password", "")
+    setValue("confirmPassword", "")
     setSignType((s) =>
       s === AUTH_STATUS.SIGNIN ? AUTH_STATUS.SIGNUP : AUTH_STATUS.SIGNIN,
     );
@@ -84,13 +88,9 @@ const Home = () => {
           className="login-container__form"
         >
           <div className="login-container__logo">
-            <Image
-              src={"/slack-clone-logo.png"}
-              loading="lazy"
-              width={100}
-              height={100}
-              alt="app_logo"
-            />
+            <div className="relative aspect-[10/2.6] w-28">
+              <Image src={"/slack-clone-logo.png"} alt="app_logo" fill />
+            </div>
           </div>
           {loading ? (
             <div className="login-container__loading">
