@@ -2,13 +2,17 @@ import Layout from "@/components/Layout";
 import Message from "@/components/Message";
 import MessageInput from "@/components/MessageInput";
 import { useRouter } from "next/router";
-import { useStore, addMessage, supabase } from "@/lib/Store";
+import {
+  useStore,
+  addMessage,
+} from "@/lib/Store";
 import { useContext, useEffect, useRef } from "react";
 import UserContext from "@/lib/UserContext";
 import { Auth } from "@/components/Auth";
 import { twMerge } from "tailwind-merge";
-import { getUnDuplicateAuthor, isMobileView, parseEmail } from "@/lib";
+import { isMobileView } from "@/lib";
 import { IconArrowLeft } from "@tabler/icons-react";
+import { NetworkStatusUser } from "@/components/NetworkStatusUser";
 
 export default function ChannelsPage() {
   const router = useRouter();
@@ -18,6 +22,8 @@ export default function ChannelsPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, channels, users } = useStore({ channelId: chId });
   const isUserIncludedInChat = messages.filter((ls) => ls.user_id === user?.id);
+  const isUserChannelChat =
+    channels.filter((ls) => ls.id === chId)?.at(0)?.created_by === user?.id;
 
   useEffect(() => {
     if (!messagesEndRef.current || isMobileView()) return;
@@ -33,11 +39,11 @@ export default function ChannelsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channels, channelId]);
-  console.log(messages);
+
   return (
     <Auth>
       <Layout channels={channels} activeChannelId={chId} users={users}>
-        {!isUserIncludedInChat.length && chId !== 1 && (
+        {!isUserIncludedInChat.length && chId !== 1 && !isUserChannelChat && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white bg-opacity-55 text-sm backdrop-blur-lg xl:text-base">
             <p className="text-primary">
               Please first chat to join the private channel!
@@ -46,20 +52,14 @@ export default function ChannelsPage() {
         )}
         <div className="layout__inner-message">
           {showUser ? (
-            <div className="overflow-y-auto px-5 pt-[95px]">
+            <div className="h-dvh overflow-y-auto px-5 pt-[95px]">
               <button
                 onClick={toggleShowUser}
-                className="flex items-center justify-center gap-2 mb-6"
+                className="mb-6 flex items-center justify-center gap-2"
               >
                 <IconArrowLeft /> Back
               </button>
-              {getUnDuplicateAuthor(messages).map((ls, idx) => {
-                return (
-                  <div key={idx} className="my-2 font-bold text-primary pl-7">
-                    {parseEmail(ls)}
-                  </div>
-                );
-              })}
+              <NetworkStatusUser messages={messages} users={users} />
             </div>
           ) : (
             <>

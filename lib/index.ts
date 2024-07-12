@@ -1,4 +1,5 @@
-import { SupabaseMessageResponse } from "./Store";
+import { USER_NETWORK_STATUS } from "./constants";
+import { SupabaseMessageResponse, SupabaseUserResponse } from "./Store";
 
 export function isMobileView() {
   if (typeof window === "undefined") return false;
@@ -12,8 +13,4 @@ export function parseEmail(email: string | null) {
   let parsePlusSign = parsedAtSign?.split("+");
   let parsedPlusSign = parsePlusSign?.at(0);
   return parsedPlusSign;
-}
-
-export function getUnDuplicateAuthor(messages: SupabaseMessageResponse[]) {
-  return Array.from(new Set(messages.map((ls) => ls.author.username)));
 }

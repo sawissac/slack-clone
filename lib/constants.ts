@@ -12,5 +12,5 @@ export const AUTH_STATUS = Object.freeze({
 
 export const USER_NETWORK_STATUS = Object.freeze({
     ONLINE: "ONLINE",
-    SIGNIN : "OFFLINE",
+    OFFLINE : "OFFLINE",
 })

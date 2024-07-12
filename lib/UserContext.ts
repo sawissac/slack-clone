@@ -1,5 +1,4 @@
 import { createContext } from "react";
-import { SupabaseUserResponse, SupabaseUserRoleResponse } from "./Store";
 import { User } from "@supabase/supabase-js";
 
 export interface UserContextType {

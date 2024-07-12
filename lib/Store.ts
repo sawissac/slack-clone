@@ -1,10 +1,11 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { Database, Tables } from "@/database.types";
+import { Tables } from "@/database.types";
+import { USER_NETWORK_STATUS } from "./constants";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  process.env.NEXT_PUBLIC_SUPABASE_KEY ?? ""
+  process.env.NEXT_PUBLIC_SUPABASE_KEY ?? "",
 );
 
 export type SupabaseMessageResponse = Tables<"messages"> & {
@@ -37,7 +38,7 @@ export const useStore = (props: UseStoreProps) => {
     messages,
     channels,
   });
-  
+
   // Load initial data and set up listeners
   useEffect(() => {
     // Get Channels
@@ -84,7 +85,7 @@ export const useStore = (props: UseStoreProps) => {
         let authorId = newMessage.user_id;
         if (!users.get(authorId)) {
           const user = await fetchUser(authorId, (user) =>
-            handleNewOrUpdatedUser(user)
+            handleNewOrUpdatedUser(user),
           );
         }
 
@@ -98,7 +99,7 @@ export const useStore = (props: UseStoreProps) => {
   useEffect(() => {
     if (deletedMessage)
       setMessages(
-        messages.filter((message) => message.id !== deletedMessage.id)
+        messages.filter((message) => message.id !== deletedMessage.id),
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedMessage]);
@@ -111,7 +112,7 @@ export const useStore = (props: UseStoreProps) => {
   useEffect(() => {
     if (deletedChannel)
       setChannels(
-        channels.filter((channel) => channel.id !== deletedChannel.id)
+        channels.filter((channel) => channel.id !== deletedChannel.id),
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedChannel]);
@@ -128,18 +129,15 @@ export const useStore = (props: UseStoreProps) => {
         ...x,
         author: users.get(x.user_id) as SupabaseUserResponse,
       })),
-      channels:
-        channels !== null
-          ? channels.sort((a, b) => a.id - b.id)
-          : [],
+      channels: channels !== null ? channels.sort((a, b) => a.id - b.id) : [],
     });
-  }, [users, messages, channels]);
+  }, [users, messages, channels, newOrUpdatedUser]);
 
   return result;
 };
 
 export const fetchChannels = async (
-  setState: Dispatch<SetStateAction<SupabaseChannelsResponse[]>>
+  setState: Dispatch<SetStateAction<SupabaseChannelsResponse[]>>,
 ) => {
   try {
     let { body } = await supabase
@@ -154,7 +152,7 @@ export const fetchChannels = async (
 
 export const fetchUser = async (
   userId: string,
-  setState: (x: SupabaseUserResponse) => void
+  setState: (x: SupabaseUserResponse) => void,
 ) => {
   try {
     let { body } = await supabase
@@ -169,9 +167,8 @@ export const fetchUser = async (
   }
 };
 
-
 export const fetchUserRoles = async (
-  setState: (x: SupabaseUserRoleResponse[] | null) => void
+  setState: (x: SupabaseUserRoleResponse[] | null) => void,
 ) => {
   try {
     let { body } = await supabase
@@ -184,9 +181,28 @@ export const fetchUserRoles = async (
   }
 };
 
+export const updateUserStatus = async (
+  userId: string,
+  statusOnline: boolean = true,
+) => {
+  try {
+    let { body } = await supabase
+      .from<SupabaseUserResponse>("users")
+      .update({
+        status: statusOnline
+          ? USER_NETWORK_STATUS.ONLINE
+          : USER_NETWORK_STATUS.OFFLINE,
+      })
+      .eq("id", userId);
+    return body;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 export const fetchMessages = async (
   channelId: number,
-  setState: (x: SupabaseMessageResponse[] | null) => void
+  setState: (x: SupabaseMessageResponse[] | null) => void,
 ) => {
   try {
     let { body } = await supabase
@@ -215,7 +231,7 @@ export const addChannel = async (slug: string, user_id: string) => {
 export const addMessage = async (
   message: string,
   channel_id: number,
-  user_id: string | undefined
+  user_id: string | undefined,
 ) => {
   try {
     let { body } = await supabase

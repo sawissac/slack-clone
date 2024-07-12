@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Router from "next/router";
 import UserContext from "@/lib/UserContext";
-import { supabase, fetchUserRoles } from "@/lib/Store";
+import { supabase, fetchUserRoles, updateUserStatus } from "@/lib/Store";
 import { AppProps } from "next/app";
-import { User } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 import "../styles/globals.css";
 
 export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
@@ -11,7 +11,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
   const [user, setUser] = useState<User | null>(null);
   const [userRoles, setUserRoles] = useState<Array<string>>([]);
   const [showUser, setShowUser] = useState(false);
-
+  const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
     const session = supabase.auth.session();
     setUser(session?.user ?? null);
@@ -23,13 +23,19 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
     }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_, session) => {
+      async (event, session) => {
         const currentUser = session?.user;
         setUser(currentUser ?? null);
         setUserLoaded(!!currentUser);
+        setSession(session);
+
         if (currentUser) {
           signIn();
           Router.replace("/channels/[id]", "/channels/1");
+        }
+
+        if (event === "SIGNED_IN") {
+          updateUserStatus(currentUser?.id ?? "", true);
         }
       },
     );
@@ -37,6 +43,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
     return () => {
       authListener?.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const signIn = async () => {
@@ -48,6 +55,7 @@ export default function SupabaseSlackClone({ Component, pageProps }: AppProps) {
   };
 
   const signOut = async () => {
+    await updateUserStatus(session?.user?.id ?? "", false);
     await supabase.auth.signOut();
     Router.replace("/", "/");
   };
